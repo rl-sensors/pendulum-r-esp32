@@ -3,8 +3,16 @@
 #include "BournsEncoder.h"
 #include <Wire.h>
 
-#include "BournsEncoder.h"
-#include "ServoShield.h"
+#include <WiFi.h>
+#include <MQTT.h>
+
+const char ssid[] = "smc3";
+const char pass[] = "nejaketazkeheslo";
+//const char mqt_ip[] = "192.168.15.127";
+const char mqt_ip[] = "192.168.86.202";
+
+WiFiClient net;
+MQTTClient client;
 
 String showText;
 int position_update = 0;
@@ -18,6 +26,8 @@ bool sendData = false;
 bool autoSendData = false;
 
 int streaming_delay = 25;
+
+void connect();
 
 void setup() {
   Wire.begin();
@@ -123,4 +133,33 @@ void loop() {
     position_update = ServoShield::STOP;
   }
   ServoShield::move(position_update);
+}
+
+void connect() {
+  Serial.print("checking wifi...");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(1000);
+  }
+
+  Serial.print("\nconnecting...");
+  while (!client.connect("arduino", "public", "public")) {
+    Serial.print(".");
+    delay(1000);
+  }
+
+  Serial.println("\nconnected!");
+
+  client.subscribe("hello");
+  // client.unsubscribe("hello");
+}
+
+void messageReceived(String &topic, String &payload) {
+  Serial.print(millis());
+  Serial.println(" incoming: " + topic + " - " + payload);
+
+  // Note: Do not use the client in the callback to publish, subscribe or
+  // unsubscribe as it may cause deadlocks when other things arrive while
+  // sending and receiving acknowledgments. Instead, change a global variable,
+  // or push to a queue and handle it in the loop after calling `client.loop()`.
 }
