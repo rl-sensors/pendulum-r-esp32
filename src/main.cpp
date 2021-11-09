@@ -78,7 +78,7 @@ void loop() {
             velocity
     );
 
-     Serial.print(state);
+     Serial.println(state);
     client.publish(observationsTopic, state);
     dataSentTS = newMillis;
 
