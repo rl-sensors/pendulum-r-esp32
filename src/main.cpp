@@ -42,7 +42,7 @@ void setup() {
   WiFi.begin(ssid, pass);
 
   ServoShield::init();
-  BournsEncoder::init(10, 11, 12);
+  BournsEncoder::init(32, 15, 33);
 
   // Note: Local domain names (e.g. "Computer.local" on OSX) are not supported
   // by Arduino. You need to set the IP address directly.

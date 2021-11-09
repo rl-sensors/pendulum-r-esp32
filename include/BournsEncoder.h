@@ -8,9 +8,9 @@
 #include "circular_buffer.h"
 
 namespace BournsEncoder {
-  int PIN_CS = 10;
-  int PIN_CLOCK = 11;
-  int PIN_DATA = 12;
+  int PIN_CS = 32;
+  int PIN_CLOCK = 15;
+  int PIN_DATA = 33;
 
   volatile int position = 0;
 
