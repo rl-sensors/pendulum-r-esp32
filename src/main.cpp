@@ -54,7 +54,7 @@ void setup() {
 
 void loop() {
   client.loop();
-  delay(10);  // <- fixes some issues with WiFi stability
+  delay(1);  // <- fixes some issues with WiFi stability
 
   unsigned long newMillis = millis();
 
@@ -78,7 +78,7 @@ void loop() {
             velocity
     );
 
-     Serial.println(state);
+    Serial.println(state);
     client.publish(observationsTopic, state);
     dataSentTS = newMillis;
 
