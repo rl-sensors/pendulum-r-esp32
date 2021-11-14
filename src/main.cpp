@@ -19,13 +19,14 @@ int position_update = 0;
 unsigned long lastMillis = 0;
 int lastPosition = 0;
 
-unsigned long dataSentTS = millis();
+unsigned long dataSentTS, lastActionTS = millis();
 int encoder_offset = 31; // with the ABS coupler (with the line)
 
 bool sendData = false;
 bool autoSendData = false;
 
 int streaming_delay = 25;
+int acting_delay = 10;
 
 String observationsTopic = "pendulum-r/obs/r01";
 String actionsTopic = "pendulum-r/act/r01";
@@ -58,8 +59,10 @@ void loop() {
 
   unsigned long newMillis = millis();
 
+  // wonder how long does this take...
+  BournsEncoder::read();
+
   if ((sendData || (autoSendData && (newMillis - dataSentTS > streaming_delay)))) {
-    BournsEncoder::read();
 
     int time_delta = (int) (newMillis - lastMillis);
     lastMillis = newMillis;
@@ -88,10 +91,12 @@ void loop() {
   }
 
   // throttle when omega is over 2 rotations per second
-  if (fabs(BournsEncoder::omegas.average()) > 2) {
-    position_update = ServoShield::STOP;
+  if (newMillis - lastActionTS > acting_delay) {
+    if (fabs(BournsEncoder::omegas.average()) > 2) {
+      position_update = ServoShield::STOP;
+    }
+    ServoShield::move(position_update);
   }
-  ServoShield::move(position_update);
 }
 
 void connect() {
@@ -143,6 +148,9 @@ void getBTData(String &topic, String &payload) {
       break;
     case 'u':
       streaming_delay = atoi(payload.substring(1).c_str());
+      break;
+    case 'i':
+      acting_delay = atoi(payload.substring(1).c_str());
       break;
     case 'z':
       sendData = true;
