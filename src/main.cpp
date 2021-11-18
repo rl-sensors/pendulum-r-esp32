@@ -26,7 +26,7 @@ bool sendData = false;
 bool autoSendData = false;
 
 int streaming_delay = 25;
-int acting_delay = 10;
+int acting_delay = 2;
 
 String observationsTopic = "pendulum-r/obs/r01";
 String actionsTopic = "pendulum-r/act/r01";
@@ -55,14 +55,16 @@ void setup() {
 
 void loop() {
   client.loop();
-  delay(1);  // <- fixes some issues with WiFi stability
+  // delay(1);  // <- fixes some issues with WiFi stability
 
   unsigned long newMillis = millis();
 
-  // wonder how long does this take...
-  BournsEncoder::read();
-
+  // this block takes about 20ms
   if ((sendData || (autoSendData && (newMillis - dataSentTS > streaming_delay)))) {
+    // this call takes 16ms
+    BournsEncoder::read();
+    // Serial.print("Bourns reading took: ");
+    // Serial.println(millis() - newMillis);
 
     int time_delta = (int) (newMillis - lastMillis);
     lastMillis = newMillis;
@@ -88,14 +90,19 @@ void loop() {
     if (sendData) {
       sendData = false;
     }
+
+     // Serial.print("Sending data took: ");
+     // Serial.println(millis() - newMillis);
   }
 
+  newMillis = millis();
   // throttle when omega is over 2 rotations per second
   if (newMillis - lastActionTS > acting_delay) {
     if (fabs(BournsEncoder::omegas.average()) > 2) {
       position_update = ServoShield::STOP;
     }
     ServoShield::move(position_update);
+    lastActionTS = newMillis;
   }
 }
 

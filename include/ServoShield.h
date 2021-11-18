@@ -10,15 +10,28 @@
 #include <Adafruit_PWMServoDriver.h>
 
 namespace ServoShield {
-  Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+  Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
+
+  #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
 
   // for turnigy 200 and 400
-#define SERVOMIN  200 // This is the 'minimum' pulse length count (out of 4096)
-#define SERVOMAX  400 // This is the 'maximum' pulse length count (out of 4096)
-#define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
+  #define SERVOMIN  200 // This is the 'minimum' pulse length count (out of 4096)
+  #define SERVOMAX  400 // This is the 'maximum' pulse length count (out of 4096)
 
+  // for HiTec 9380TH
+//  #define SERVOMIN  150 // This is the 'minimum' pulse length count (out of 4096)
+//  #define SERVOMAX  450 // This is the 'maximum' pulse length count (out of 4096)
+//  #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
+
+  // turningy
   static constexpr int  SLOW = 1;
   static constexpr int  FAST = 2;
+
+  // HiTec
+//  static constexpr int  SLOW = 2;
+//  static constexpr int  FAST = 4;
+
+
   static constexpr int  STOP = 0;
 
 // our servo # counter
