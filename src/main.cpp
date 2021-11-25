@@ -26,7 +26,7 @@ bool sendData = false;
 bool autoSendData = false;
 
 int streaming_delay = 25;
-int acting_delay = 2;
+int acting_delay = 10;
 
 String observationsTopic = "pendulum-r/obs/r01";
 String actionsTopic = "pendulum-r/act/r01";
@@ -114,7 +114,7 @@ void connect() {
   }
 
   Serial.print("\nconnecting...");
-  while (!client.connect("arduino", "public", "public")) {
+  while (!client.connect("pendulum_r_prod", "public", "public")) {
     Serial.print(".");
     delay(1000);
   }

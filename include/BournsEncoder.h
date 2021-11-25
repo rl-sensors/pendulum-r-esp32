@@ -12,6 +12,8 @@ namespace BournsEncoder {
   int PIN_CLOCK = 15;
   int PIN_DATA = 33;
 
+  const int bourns_delay = 1;
+
   volatile int position = 0;
 
   int lastPosition = 0;
@@ -40,15 +42,15 @@ namespace BournsEncoder {
 
   void read() {
     digitalWrite(PIN_CS, HIGH);
-    delayMicroseconds(500);
+    delayMicroseconds(bourns_delay);
     digitalWrite(PIN_CS, LOW);
 
     stream[16] = {0};
     for (int i = 0; i < 16; i++) {
       digitalWrite(PIN_CLOCK, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(bourns_delay);
       digitalWrite(PIN_CLOCK, HIGH);
-      delayMicroseconds(500);
+      delayMicroseconds(bourns_delay);
 
       stream[i] = digitalRead(PIN_DATA);
     }
