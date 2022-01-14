@@ -4,6 +4,14 @@ This is an implementation of the swing up pendulum for [ESP32S2](https://www.spa
 
 <img src="docs/pendulum_white.png" alt="Pendulum" width="400"/>
 
+The CAD file with parts to be 3D printed is in [docs folder](docs/pendulum_r_sim.FCStd) (requires FreeCAD). They are encoder mount, pendulum coupler and the weight cylinder. 
+We used ABS filament with 100% in-fill. Despite that, both the encoder mount and the coupler broke during the experiments.
+
+The arm is made of aluminium rectangle tube 20x10x2mm and the pendulum is made of 8mm pine dowel.
+
+The servo is mounted using a servo block - [they are available in the US](https://www.gobilda.com/servoblock-standard-size-25-tooth-spline-hub-shaft/) - we used a custom made block.
+
+### Communication with DRL Training
 It uses MQTT protocol for communication (over WiFi).
 The observations are streamed to `pendulum-r/obs/r01` and the actions need to be streamed to `pendulum-r/act/r01`.
 
@@ -52,3 +60,7 @@ The final reading used for training is mean of the last 3 readings (implemented 
 The servo [Hitec D645MW](https://hitecrcd.com/products/servos/sport-servos/digital-sport-servos/d645mw/product) is controlled through [servo shield]( https://www.
 adafruit.com/product/815).
 This allows the MCU and servo to be powered separately and protect the MCU when servo fails (which does happen every few hundreds hours of operation).
+
+We experimented with different servos - with varying success. The D645MW is very smooth and has a good holding torque and it's quite durable.
+We were able to train with Turnigy TGY-WP23 as well but it oscillates and breaks quite fast.
+We also tried [HSB-9380TH](https://hitecrcd.com/products/servos/digital/brushless-digital/hsb-9380th-ultra-torque-brushless-titanium-gear-servo/product) but it was not possible to even start training because it developed powerful oscillation. 
