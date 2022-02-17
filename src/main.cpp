@@ -28,8 +28,10 @@ bool autoSendData = false;
 int streaming_delay = 25;
 int acting_delay = 10;
 
-String observationsTopic = "pendulum-r/obs/r01";
-String actionsTopic = "pendulum-r/act/r01";
+constexpr int setupNo = 2;
+
+String observationsTopic = String("pendulum-r/obs/r0") + setupNo;
+String actionsTopic = String("pendulum-r/act/r0") + setupNo;
 
 void connect();
 void getBTData(String &topic, String &payload);
@@ -39,11 +41,15 @@ void setup() {
   delay(2000);
   Serial.println("Starting...");
 
-  Wire.begin();
+//  Wire.begin();
+  Wire.begin(1, 2); // ESP32S2
+  Wire.setClock(400000);
+
   WiFi.begin(ssid, pass);
 
   ServoShield::init();
-  BournsEncoder::init(32, 15, 33);
+//  BournsEncoder::init(32, 15, 33); // ESP32
+  BournsEncoder::init(8, 4, 6); //ESP32S2
 
   // Note: Local domain names (e.g. "Computer.local" on OSX) are not supported
   // by Arduino. You need to set the IP address directly.
@@ -51,6 +57,11 @@ void setup() {
   client.onMessage(getBTData);
 
   connect();
+
+  Serial.print("Listening on ");
+  Serial.println(actionsTopic);
+  Serial.print("Observations on ");
+  Serial.println(observationsTopic);
 }
 
 void loop() {
@@ -113,8 +124,10 @@ void connect() {
     delay(1000);
   }
 
+  String clientId = String("pendulum_r_prod_s") + setupNo;
+
   Serial.print("\nconnecting...");
-  while (!client.connect("pendulum_r_prod", "public", "public")) {
+  while (!client.connect(clientId.c_str(), "public", "public")) {
     Serial.print(".");
     delay(1000);
   }
