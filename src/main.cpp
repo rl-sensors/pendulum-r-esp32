@@ -70,9 +70,9 @@ void loop() {
 
   unsigned long newMillis = millis();
 
-  // this block takes about 20ms
+  // this block takes about 5ms
   if ((sendData || (autoSendData && (newMillis - dataSentTS > streaming_delay)))) {
-    // this call takes 16ms
+    // this call takes 3ms
     BournsEncoder::read();
     // Serial.print("Bourns reading took: ");
     // Serial.println(millis() - newMillis);
