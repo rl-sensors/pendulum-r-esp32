@@ -24,6 +24,9 @@ int encoder_offset = 31; // with the ABS coupler (with the line)
 
 bool sendData = false;
 bool autoSendData = false;
+bool continuousActionSpace = false;
+
+constexpr float throttleSpeed = 2.0;
 
 int streaming_delay = 25;
 int acting_delay = 10;
@@ -41,7 +44,6 @@ void setup() {
   delay(2000);
   Serial.println("Starting...");
 
-//  Wire.begin();
   Wire.begin(1, 2); // ESP32S2
   Wire.setClock(400000);
 
@@ -108,8 +110,8 @@ void loop() {
 
   newMillis = millis();
   // throttle when omega is over 2 rotations per second
-  if (newMillis - lastActionTS > acting_delay) {
-    if (fabs(BournsEncoder::omegas.average()) > 2) {
+  if (!continuousActionSpace && newMillis - lastActionTS > acting_delay) {
+    if (fabs(BournsEncoder::omegas.average()) > throttleSpeed) {
       position_update = ServoShield::STOP;
     }
     ServoShield::move(position_update);
@@ -180,6 +182,20 @@ void getBTData(String &topic, String &payload) {
       break;
     case 'y':
       autoSendData = false;
+      break;
+    case 'c':
+      continuousActionSpace = true;
+      break;
+    case 'v':
+      continuousActionSpace = false;
+      break;
+    case 'e':
+      ServoShield::EXP_FILTER_C = atof(payload.substring(1).c_str());
+      break;
+    case 'b':
+      if (fabs(BournsEncoder::omegas.average()) <= throttleSpeed) {
+        ServoShield::set_action(atof(payload.substring(1).c_str()));
+      }
       break;
 
 //      case 'p':

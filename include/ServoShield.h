@@ -27,15 +27,17 @@ namespace ServoShield {
   static constexpr int  SLOW = 1;
   static constexpr int  FAST = 2;
 
-  // HiTec
+  float EXP_FILTER_C = 0.9;
+
+    // HiTec
 //  static constexpr int  SLOW = 2;
 //  static constexpr int  FAST = 4;
 
 
   static constexpr int  STOP = 0;
 
-// our servo # counter
-  uint8_t servonum = 4;
+  constexpr uint8_t servonum = 4;
+
   volatile int pulselen = (SERVOMAX - SERVOMIN) / 2 + SERVOMIN;
 
   void init() {
@@ -58,6 +60,33 @@ namespace ServoShield {
 
     pwm.setPWM(servonum, 0, pulselen);
   }
+
+    void set_position_with_filter(int const &new_position_cmd) {
+      int old_position = pulselen;
+      int new_position = old_position * EXP_FILTER_C + new_position_cmd * (1.0 - EXP_FILTER_C);
+      if (new_position <= SERVOMIN) {
+        pulselen = SERVOMIN;
+      } else if (new_position >= SERVOMAX) {
+        pulselen = SERVOMAX;
+      } else {
+        pulselen = new_position;
+      }
+
+      pwm.setPWM(servonum, 0, pulselen);
+    }
+
+    void set_action(float const &new_position_cmd) {
+      int position = map(
+              new_position_cmd * 1000, -1000.0, 1000.0,
+              SERVOMIN, SERVOMAX
+      );
+      set_position_with_filter(position);
+
+//    char msg[100] = "";
+//    sprintf(msg, "Servo %i: action %f translated to position %i", servonum, new_position_cmd, position);
+//    Mqtt::client.publish("quaid01/actions", msg);
+    }
+
 
 }
 
