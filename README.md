@@ -57,8 +57,7 @@ It requires custom protocol for reading the values. It is implemented in [Bourns
 The final reading used for training is mean of the last 3 readings (implemented through circular buffer).
 
 ### Servo Shield
-The servo [Hitec D645MW](https://hitecrcd.com/products/servos/sport-servos/digital-sport-servos/d645mw/product) is controlled through [servo shield]( https://www.
-adafruit.com/product/815).
+The servo [Hitec D645MW](https://hitecrcd.com/products/servos/sport-servos/digital-sport-servos/d645mw/product) is controlled through [servo shield](https://www.adafruit.com/product/815).
 This allows the MCU and servo to be powered separately and protect the MCU when servo fails (which does happen every few hundreds hours of operation).
 
 We experimented with different servos - with varying success. The D645MW is very smooth and has a good holding torque and it's quite durable.
