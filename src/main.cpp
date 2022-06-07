@@ -8,8 +8,7 @@
 
 const char ssid[] = "smc6";
 const char pass[] = "nejaketazkeheslo";
-const char mqt_ip[] = "192.168.15.127";
-//const char mqt_ip[] = "192.168.86.202";
+const char mqt_ip[] = "192.168.86.202";
 
 WiFiClient net;
 MQTTClient client;
@@ -31,7 +30,7 @@ constexpr float throttleSpeed = 2.0;
 int streaming_delay = 25;
 int acting_delay = 10;
 
-constexpr int setupNo = 2;
+constexpr int setupNo = 1;
 
 String observationsTopic = String("pendulum-r/obs/r0") + setupNo;
 String actionsTopic = String("pendulum-r/act/r0") + setupNo;
@@ -51,7 +50,8 @@ void setup() {
 
   ServoShield::init();
 //  BournsEncoder::init(32, 15, 33); // ESP32
-  BournsEncoder::init(8, 4, 6); //ESP32S2
+//   BournsEncoder::init(8, 4, 6); //ESP32S2 - P2
+  BournsEncoder::init(6, 8, 10); //ESP32S2 - P1
 
   // Note: Local domain names (e.g. "Computer.local" on OSX) are not supported
   // by Arduino. You need to set the IP address directly.
